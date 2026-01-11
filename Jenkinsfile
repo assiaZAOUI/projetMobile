@@ -55,16 +55,6 @@ pipeline {
             }
         }
         
-        stage('📤 Load to Minikube') {
-            steps {
-                echo "Chargement de l'image dans Minikube..."
-                script {
-                    sh "minikube image load ${DOCKER_IMAGE}"
-                    sh "minikube image load ${APP_NAME}:latest"
-                }
-            }
-        }
-        
         stage('🚀 Deploy to Kubernetes') {
             steps {
                 echo 'Déploiement sur Kubernetes...'

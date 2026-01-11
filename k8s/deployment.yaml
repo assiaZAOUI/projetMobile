@@ -14,9 +14,10 @@ spec:
     spec:
       containers:
       - name: tp-spring-boot
-        image: assia207/gestion-produits:1.0
+        image: tp-spring-boot:latest
+        imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 8080
+            - containerPort: 8080
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: "prod"
