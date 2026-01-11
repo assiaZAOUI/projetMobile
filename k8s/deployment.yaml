@@ -20,8 +20,6 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
-        
-        # ✅ AJOUTEZ CETTE SECTION
         resources:
           requests:
             memory: "512Mi"    # Mémoire minimale garantie
