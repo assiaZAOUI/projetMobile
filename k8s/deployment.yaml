@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tp-spring-boot
+  labels:
+    app: tp-spring-boot
 spec:
   replicas: 2
   selector:
@@ -17,26 +19,27 @@ spec:
         image: tp-spring-boot:latest
         imagePullPolicy: IfNotPresent
         ports:
-            - containerPort: 8080
-        env:
-        - name: SPRING_PROFILES_ACTIVE
-          value: "prod"
+        - containerPort: 8080
+        
+        # ✅ AJOUTEZ CETTE SECTION
         resources:
           requests:
-            memory: "256Mi"
-            cpu: "250m"
+            memory: "512Mi"    # Mémoire minimale garantie
+            cpu: "250m"        # 0.25 CPU garanti
           limits:
-            memory: "512Mi"
-            cpu: "500m"
+            memory: "1Gi"      # Mémoire maximale autorisée
+            cpu: "500m"        # 0.5 CPU maximum
+        
         livenessProbe:
           httpGet:
-            path: /produits
+            path: /actuator/health
             port: 8080
           initialDelaySeconds: 60
           periodSeconds: 10
+        
         readinessProbe:
           httpGet:
-            path: /produits
+            path: /actuator/health
             port: 8080
           initialDelaySeconds: 30
           periodSeconds: 5
