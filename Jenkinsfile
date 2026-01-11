@@ -22,14 +22,14 @@ pipeline {
         stage('🔨 Build Maven') {
             steps {
                 echo 'Compilation du projet Spring Boot...'
-                bat 'mvn clean compile'
+                sh 'mvn clean compile'
             }
         }
         
         stage('🧪 Tests Unitaires') {
             steps {
                 echo 'Exécution des tests...'
-                bat 'mvn test'
+                sh 'mvn test'
             }
             post {
                 always {
@@ -41,7 +41,7 @@ pipeline {
         stage('📦 Package') {
             steps {
                 echo 'Création du JAR...'
-                bat 'mvn package -DskipTests'
+                sh 'mvn package -DskipTests'
             }
         }
         
@@ -49,8 +49,8 @@ pipeline {
             steps {
                 echo "Construction de l'image Docker..."
                 script {
-                    bat "docker build -t ${DOCKER_IMAGE} ."
-                    bat "docker tag ${DOCKER_IMAGE} ${APP_NAME}:latest"
+                    sh "docker build -t ${DOCKER_IMAGE} ."
+                    sh "docker tag ${DOCKER_IMAGE} ${APP_NAME}:latest"
                 }
             }
         }
@@ -59,8 +59,8 @@ pipeline {
             steps {
                 echo "Chargement de l'image dans Minikube..."
                 script {
-                    bat "minikube image load ${DOCKER_IMAGE}"
-                    bat "minikube image load ${APP_NAME}:latest"
+                    sh "minikube image load ${DOCKER_IMAGE}"
+                    sh "minikube image load ${APP_NAME}:latest"
                 }
             }
         }
@@ -69,10 +69,10 @@ pipeline {
             steps {
                 echo 'Déploiement sur Kubernetes...'
                 script {
-                    bat 'kubectl apply -f k8s/deployment.yaml'
-                    bat 'kubectl apply -f k8s/service.yaml'
-                    bat "kubectl set image deployment/tp-spring-boot tp-spring-boot=${DOCKER_IMAGE}"
-                    bat 'kubectl rollout status deployment/tp-spring-boot'
+                    sh 'kubectl apply -f k8s/deployment.yaml'
+                    sh 'kubectl apply -f k8s/service.yaml'
+                    sh "kubectl set image deployment/tp-spring-boot tp-spring-boot=${DOCKER_IMAGE}"
+                    sh 'kubectl rollout status deployment/tp-spring-boot'
                 }
             }
         }
@@ -80,8 +80,8 @@ pipeline {
         stage('✅ Vérification') {
             steps {
                 echo 'Vérification du déploiement...'
-                bat 'kubectl get pods -l app=tp-spring-boot'
-                bat 'kubectl get services tp-spring-boot-service'
+                sh 'kubectl get pods -l app=tp-spring-boot'
+                sh 'kubectl get services tp-spring-boot-service'
             }
         }
     }
@@ -89,7 +89,7 @@ pipeline {
     post {
         success {
             echo '✅ Pipeline exécuté avec succès !'
-            bat 'kubectl get all -l app=tp-spring-boot'
+            sh 'kubectl get all -l app=tp-spring-boot'
         }
         failure {
             echo '❌ Échec du pipeline !'
